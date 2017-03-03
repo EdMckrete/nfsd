@@ -19,19 +19,15 @@ const ( // Common
 const ( // Mount-specific
 	MntPathLen = uint32(1024) // Maximum bytes in a path name
 	MntNameLen = uint32(255)  // Maximum bytes in a name
-	MntFHSize3 = FHSize3
 )
 
 const ( // NFSv3-specific
-	// NFS3_FHSIZE identical to FHSIZE3
-	NFS3FHSize         = FHSize3
 	NFS3CookieVerfSize = uint32(8) // The size in bytes of the opaque cookie verifier passed by READDIR and READDIRPLUS
 	NFS3CreateVerfSize = uint32(8) // The size in bytes of the opaque verifier used for exclusive CREATE
 	NFS3WriteVersSize  = uint32(8) // The size in butes of the opaque verifier used for asynchronous WRITE
 )
 
 const ( // enum mountstat3
-	MNT3OK             = OK
 	MNT3ErrPERM        = uint32(1)
 	MNT3ErrNOENT       = uint32(2)
 	MNT3ErrIO          = uint32(5)
@@ -44,7 +40,6 @@ const ( // enum mountstat3
 )
 
 const ( // enum nfsstat3
-	NFS3OK             = OK
 	NFS3ErrPERM        = uint32(1)
 	NFS3ErrNOENT       = uint32(2)
 	NFS3ErrIO          = uint32(5)
@@ -76,13 +71,11 @@ const ( // enum nfsstat3
 )
 
 const ( // program MOUNT_PROGRAM version MOUNT_V3
-	MOUNTPROC3NULL = ProcNULL
 	MOUNTPROC3MNT  = uint32(1)
 	MOUNTPROC3UMNT = uint32(3)
 )
 
 const ( // program NFS_PROGRAM version NFS_V3
-	NFSPROC3NULL        = ProcNULL
 	NFSPROC3GETATTR     = uint32(1)
 	NFSPROC3SETATTR     = uint32(2)
 	NFSPROC3LOOKUP      = uint32(3)

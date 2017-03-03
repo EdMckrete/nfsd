@@ -4,14 +4,14 @@ package nfsd
 
 type MountV3Interface interface {
 	MountProc3Null()
-	MountProc3Mnt(dirpath string) (fhsStatus uint32, fhandle []byte)
-	MountProc3Umnt(dirpath string)
+	MountProc3Mnt(mountProc3MntArgs *MountProc3MntArgsStruct) (mountProc3MntResults *MountProc3MntResultsStruct)
+	MountProc3Umnt(mountProc3UmntArgs *MountProc3UmntArgsStruct)
 }
 
 type NFSV3Interface interface {
 	NFSProc3Null()
-	NFSProc3GetAttr(fh []byte) (status uint32, fattr3 *FAttr3Struct)
-	NFSProc3SetAttr(fh []byte, newAttributes *SAttr3Struct, guard *SAttrGuard3Struct) (status uint32) // , SETATTR3res
+	NFSProc3GetAttr(nfsProc3GetAttrArgs *NFSProc3GetAttrArgsStruct) (nfsProc3GetAttrResults *NFSProc3GetAttrResultsStruct)
+	NFSProc3SetAttr(nfsProc3SetAttrArgs *NFSProc3SetAttrArgsStruct) (nfsProc3SetAttrResults *NFSProc3SetAttrResultsStruct)
 	/*
 		NFSProc3Lookup      = uint32(3)
 		NFSProc3Access      = uint32(4)
