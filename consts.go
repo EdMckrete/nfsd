@@ -113,3 +113,12 @@ const ( // enum time_how
 	SetToServerTime = uint32(1)
 	SetToClientTime = uint32(2)
 )
+
+const (
+	Access3Read    = uint32(0x0001)
+	Access3Lookup  = uint32(0x0002)
+	Access3Modify  = uint32(0x0004)
+	Access3Extend  = uint32(0x0008)
+	Access3Delete  = uint32(0x0010)
+	Access3Execute = uint32(0x0020)
+)

@@ -50,13 +50,13 @@ type FAttr3Struct struct { // struct fattr3
 }
 
 type SAttr3Struct struct { // struct sattr3
-	SetMode  bool
-	Mode     uint32 //         only used/valid if SetMode == true
-	SetUID   bool
-	UID      uint32 //         only used/valid if SetUID == true
-	SetGID   bool
-	GID      uint32 //         only used/valid if SetGID == true
-	SetSize  bool
+	SetMode  bool           //
+	Mode     uint32         // only used/valid if SetMode == true
+	SetUID   bool           //
+	UID      uint32         // only used/valid if SetUID == true
+	SetGID   bool           //
+	GID      uint32         // only used/valid if SetGID == true
+	SetSize  bool           //
 	Size     uint64         // only used/valid if SetSize == true
 	SetATime uint32         // enum time_how
 	ATime    NFSTime3Struct // only used/valid if time_how == SetToClientTime
@@ -123,5 +123,29 @@ type NFSProc3SetAttrArgsStruct struct {
 }
 
 type NFSProc3SetAttrResultsStruct struct {
-	WCC WCCDataStruct
+	Status uint32 // OK or enum nfsstat3
+	WCC    WCCDataStruct
+}
+
+type NFSProc3LookupArgsStruct struct {
+	DirFHandle []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	FileName   []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"255"`
+}
+
+type NFSProc3LookupResultsStruct struct {
+	Status        uint32           // OK or enum nfsstat3
+	FHandle       []byte           // only used/valid if Status == OK
+	ObjAttributes PostOpAttrStruct // only used/valid if Status == OK
+	DirAttributes PostOpAttrStruct
+}
+
+type NFSProc3AccessArgsStruct struct {
+	FHandle []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Access  uint32 `XDR_Name:"Unsigned Integer"`
+}
+
+type NFSProc3AccessResultsStruct struct {
+	Status        uint32           // OK or enum nfsstat3
+	ObjAttributes PostOpAttrStruct //
+	Access        uint32           // only used/valid if Status == OK
 }
