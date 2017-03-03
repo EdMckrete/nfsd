@@ -8,25 +8,26 @@ const ( // ONC RPC Prog/Vers
 	NFSVersion = uint32(3)      //   version NFS_V3
 )
 
+const ( // Common
+	FHSize3 = uint32(64) // Max size in bytes of a file handle
+
+	OK = uint32(0)
+
+	ProcNULL = uint32(0)
+)
+
 const ( // Mount-specific
 	MntPathLen = uint32(1024) // Maximum bytes in a path name
 	MntNameLen = uint32(255)  // Maximum bytes in a name
-	// FHSIZE3 identical to NFS3_FHSIZE
+	MntFHSize3 = FHSize3
 )
 
 const ( // NFSv3-specific
 	// NFS3_FHSIZE identical to FHSIZE3
+	NFS3FHSize         = FHSize3
 	NFS3CookieVerfSize = uint32(8) // The size in bytes of the opaque cookie verifier passed by READDIR and READDIRPLUS
 	NFS3CreateVerfSize = uint32(8) // The size in bytes of the opaque verifier used for exclusive CREATE
 	NFS3WriteVersSize  = uint32(8) // The size in butes of the opaque verifier used for asynchronous WRITE
-)
-
-const ( // Common
-	FHSize3 = uint(64) // Max size in bytes of a file handle
-
-	ProcNULL = uint32(0)
-
-	OK = uint32(0)
 )
 
 const ( // enum mountstat3
@@ -74,16 +75,6 @@ const ( // enum nfsstat3
 	NFS3ErrJUKEBOX     = uint32(10008)
 )
 
-const ( // enum ftype3
-	FTypeREG  = uint32(1)
-	FTypeDIR  = uint32(2)
-	FTypeBLK  = uint32(3)
-	FTypeCHR  = uint32(4)
-	FTypeLNK  = uint32(5)
-	FTypeSOCK = uint32(6)
-	FTypeFIFO = uint32(7)
-)
-
 const ( // program MOUNT_PROGRAM version MOUNT_V3
 	MOUNTPROC3NULL = ProcNULL
 	MOUNTPROC3MNT  = uint32(1)
@@ -102,7 +93,6 @@ const ( // program NFS_PROGRAM version NFS_V3
 	NFSPROC3CREATE      = uint32(8)
 	NFSPROC3MKDIR       = uint32(9)
 	NFSPROC3SYMLINK     = uint32(10)
-	NFSPROC3MKNOD       = uint32(11)
 	NFSPROC3REMOVE      = uint32(12)
 	NFSPROC3RMDIR       = uint32(13)
 	NFSPROC3RENAME      = uint32(14)
@@ -113,4 +103,20 @@ const ( // program NFS_PROGRAM version NFS_V3
 	NFSPROC3FSINFO      = uint32(19)
 	NFSPROC3PATHCONF    = uint32(20)
 	NFSPROC3COMMIT      = uint32(21)
+)
+
+const ( // enum ftype3
+	FTypeREG  = uint32(1)
+	FTypeDIR  = uint32(2)
+	FTypeBLK  = uint32(3)
+	FTypeCHR  = uint32(4)
+	FTypeLNK  = uint32(5)
+	FTypeSOCK = uint32(6)
+	FTypeFIFO = uint32(7)
+)
+
+const ( // enum time_how
+	DontChange      = uint32(0)
+	SetToServerTime = uint32(1)
+	SetToClientTime = uint32(2)
 )
