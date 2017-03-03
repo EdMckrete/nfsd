@@ -85,9 +85,25 @@ type PostOpAttrStruct struct { // union post_op_attr
 	Attributes       FAttr3Struct // only used/valid if AttributesFollow == true
 }
 
+type PostOpFh3Struct struct { // union post_op_fh3
+	HandleFollows bool
+	Handle        []byte // only used/valid if HandleFollows == true
+}
+
 type WCCDataStruct struct { // struct wcc_data
 	Before PreOpAttrStruct
 	After  PostOpAttrStruct
+}
+
+type DirOpArgs3Struct struct { // struct diropargs3
+	Dir  []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Name []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"255"`
+}
+
+type CreateHowStruct struct { // union CreateHowStruct
+	Mode          uint32                   // enum createmode3
+	ObjAttributes SAttr3Struct             // only used/valid if Mode == Unchecked || Mode == Guarded
+	Verf          [NFS3CreateVerfSize]byte // only used/valid if Mode == Exclusive
 }
 
 // Mount V3 API call/reply structs
@@ -108,7 +124,7 @@ type MountProc3UmntArgsStruct struct {
 // NFSv3 API call/reply structs
 
 type NFSProc3GetAttrArgsStruct struct {
-	FHandle []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Object []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
 }
 
 type NFSProc3GetAttrResultsStruct struct {
@@ -117,7 +133,7 @@ type NFSProc3GetAttrResultsStruct struct {
 }
 
 type NFSProc3SetAttrArgsStruct struct {
-	FHandle       []byte
+	Object        []byte
 	NewAttributes SAttr3Struct
 	Guard         SAttrGuard3Struct
 }
@@ -128,24 +144,87 @@ type NFSProc3SetAttrResultsStruct struct {
 }
 
 type NFSProc3LookupArgsStruct struct {
-	DirFHandle []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
-	FileName   []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"255"`
+	What DirOpArgs3Struct `XDR_Name:"Structure"`
 }
 
 type NFSProc3LookupResultsStruct struct {
 	Status        uint32           // OK or enum nfsstat3
-	FHandle       []byte           // only used/valid if Status == OK
+	Object        []byte           // only used/valid if Status == OK
 	ObjAttributes PostOpAttrStruct // only used/valid if Status == OK
 	DirAttributes PostOpAttrStruct
 }
 
 type NFSProc3AccessArgsStruct struct {
-	FHandle []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
-	Access  uint32 `XDR_Name:"Unsigned Integer"`
+	Object []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Access uint32 `XDR_Name:"Unsigned Integer"`
 }
 
 type NFSProc3AccessResultsStruct struct {
 	Status        uint32           // OK or enum nfsstat3
 	ObjAttributes PostOpAttrStruct //
 	Access        uint32           // only used/valid if Status == OK
+}
+
+type NFSProc3ReadLinkArgsStruct struct {
+	SymLink []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+}
+
+type NFSProc3ReadLinkResultsStruct struct {
+	Status            uint32           // OK or enum nfsstat3
+	SymLinkAttributes PostOpAttrStruct //
+	Path              []byte           // only used/valid if Status == OK
+}
+
+type NFSProc3ReadArgsStruct struct {
+	File   []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Offset uint64 `XDR_Name:"Hyper Integer"`
+	Count  uint32 `XDR_Name:"Unsigned Integer"`
+}
+
+type NFSProc3ReadResultsStruct struct {
+	Status         uint32           // OK or enum nfsstat3
+	FileAttributes PostOpAttrStruct //
+	Count          uint32           // only used/valid if Status == OK
+	EOF            bool             // only used/valid if Status == OK
+	Data           []byte           // only used/valid if Status == OK
+}
+
+type NFSProc3WriteArgsStruct struct {
+	File   []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"` //
+	Offset uint64 `XDR_Name:"Hyper Integer"`                                //
+	Count  uint32 `XDR_Name:"Unsigned Integer"`                             //
+	Stable uint32 `XDR_Name:"Enumeration"`                                  // enum stable_how
+	Data   []byte `XDR_Name:"Variable-Length Opaque Data"`                  //
+}
+
+type NFSProc3WriteResultsStruct struct {
+	Status    uint32                  // OK or enum nfsstat3
+	FileWCC   WCCDataStruct           //
+	Count     uint32                  // only used/valid if Status == OK
+	Committed uint32                  // only used/valid if Status == OK; enum stable_how
+	Verf      [NFS3WriteVersSize]byte // only used/valid if Status == OK
+}
+
+type NFSProc3CreateArgsStruct struct {
+	Where DirOpArgs3Struct
+	How   CreateHowStruct
+}
+
+type NFSProc3CreateResultsStruct struct {
+	Status        uint32           // OK or enum nfsstat3
+	Obj           PostOpFh3Struct  // only used/valid if Status == OK
+	ObjAttributes PostOpAttrStruct // only used/valid if Status == OK
+	DirWCC        WCCDataStruct
+}
+
+type NFSProc3MKDirArgsStruct struct {
+	Where      DirOpArgs3Struct
+	Attributes SAttr3Struct
+}
+
+type NFSProc3MKDirResultsStruct struct {
+	Status        uint32           // OK or enum nfsstat3
+	Obj           PostOpFh3Struct  // only used/valid if Status == OK
+	ObjAttributes PostOpAttrStruct // only used/valid if Status == OK
+	DirWCC        WCCDataStruct
 }

@@ -122,3 +122,15 @@ const (
 	Access3Delete  = uint32(0x0010)
 	Access3Execute = uint32(0x0020)
 )
+
+const ( // enum stable_how
+	Unstable = uint32(0)
+	DataSync = uint32(1)
+	FileSync = uint32(2)
+)
+
+const ( // enum createmode3
+	Unchecked = uint32(0)
+	Guarded   = uint32(1)
+	Exclusive = uint32(2)
+)
