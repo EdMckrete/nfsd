@@ -228,3 +228,142 @@ type NFSProc3MKDirResultsStruct struct {
 	ObjAttributes PostOpAttrStruct // only used/valid if Status == OK
 	DirWCC        WCCDataStruct
 }
+
+type NFSProc3SymLinkArgsStruct struct {
+	Where             DirOpArgs3Struct
+	SymLinkAttributes SAttr3Struct
+	SymLinkData       []byte
+}
+
+type NFSProc3SymLinkResultsStruct struct {
+	Status        uint32           // OK or enum nfsstat3
+	Obj           PostOpFh3Struct  // only used/valid if Status == OK
+	ObjAttributes PostOpAttrStruct // only used/valid if Status == OK
+	DirWCC        WCCDataStruct
+}
+
+type NFSProc3RemoveArgsStruct struct {
+	Where DirOpArgs3Struct `XDR_Name:"Structure"`
+}
+
+type NFSProc3RemoveResultsStruct struct {
+	Status uint32 // OK or enum nfsstat3
+	DirWCC WCCDataStruct
+}
+
+type NFSProc3RMDirArgsStruct struct {
+	Where DirOpArgs3Struct `XDR_Name:"Structure"`
+}
+
+type NFSProc3RMDirResultsStruct struct {
+	Status uint32 // OK or enum nfsstat3
+	DirWCC WCCDataStruct
+}
+
+type NFSProc3RenameArgsStruct struct {
+	From DirOpArgs3Struct `XDR_Name:"Structure"`
+	To   DirOpArgs3Struct `XDR_Name:"Structure"`
+}
+
+type NFSProc3RenameResultsStruct struct {
+	Status     uint32 // OK or enum nfsstat3
+	FromDirWCC WCCDataStruct
+	ToDirWCC   WCCDataStruct
+}
+
+type NFSProc3LinkArgsStruct struct {
+	File []byte           `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Link DirOpArgs3Struct `XDR_Name:"Structure"`
+}
+
+type NFSProc3LinkResultsStruct struct {
+	Status         uint32 // OK or enum nfsstat3
+	FileAttributes PostOpAttrStruct
+	LinkDirWCC     WCCDataStruct
+}
+
+type NFSProc3ReadDirArgsStruct struct {
+	Dir        []byte                   `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Cookie     uint64                   `XDR_Name:"Unsigned Hyper Integer"`
+	CookieVerf [NFS3CookieVerfSize]byte `XDR_Name:"Fixed-Length Opaque Data"`
+	Count      uint32                   `XDR_Name:"Unsigned Integer"`
+}
+
+type NFSProc3ReadDirResultsStruct struct {
+	Status uint32 // OK or enum nfsstat3
+	// TODO
+}
+
+type NFSProc3ReadDirPlusArgsStruct struct {
+	Dir        []byte                   `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Cookie     uint64                   `XDR_Name:"Unsigned Hyper Integer"`
+	CookieVerf [NFS3CookieVerfSize]byte `XDR_Name:"Fixed-Length Opaque Data"`
+	DirCount   uint32                   `XDR_Name:"Unsigned Integer"`
+	MaxCount   uint32                   `XDR_Name:"Unsigned Integer"`
+}
+
+type NFSProc3ReadDirPlusResultsStruct struct {
+	Status uint32 // OK or enum nfsstat3
+	// TODO
+}
+
+type NFSProc3FSStatArgsStruct struct {
+	FSRoot []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+}
+
+type NFSProc3FSStatResultsStruct struct {
+	Status        uint32           // OK or enum nfsstat3
+	ObjAttributes PostOpAttrStruct //
+	TBytes        uint64           // only used/valid if Status == OK
+	FBytes        uint64           // only used/valid if Status == OK
+	ABytes        uint64           // only used/valid if Status == OK
+	TFiles        uint64           // only used/valid if Status == OK
+	FFiles        uint64           // only used/valid if Status == OK
+	AFiles        uint64           // only used/valid if Status == OK
+	InvarSec      uint32           // only used/valid if Status == OK
+}
+
+type NFSProc3FSInfoArgsStruct struct {
+	FSRoot []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+}
+
+type NFSProc3FSInfoResultsStruct struct {
+	Status        uint32           // OK or enum nfsstat3
+	ObjAttributes PostOpAttrStruct //
+	RTMax         uint32           // only used/valid if Status == OK
+	RTPref        uint32           // only used/valid if Status == OK
+	RTMult        uint32           // only used/valid if Status == OK
+	WTMax         uint32           // only used/valid if Status == OK
+	WTMult        uint32           // only used/valid if Status == OK
+	DTPref        uint32           // only used/valid if Status == OK
+	MaxFileSize   uint64           // only used/valid if Status == OK
+	TimeDelta     NFSTime3Struct   // only used/valid if Status == OK
+	Properties    uint32           // only used/valid if Status == OK
+}
+
+type NFSProc3PathConfArgsStruct struct {
+	Object []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+}
+
+type NFSProc3PathConfResultsStruct struct {
+	Status          uint32           // OK or enum nfsstat3
+	ObjAttributes   PostOpAttrStruct //
+	LinkMax         uint32           // only used/valid if Status == OK
+	NameMax         uint32           // only used/valid if Status == OK
+	NoTrunc         bool             // only used/valid if Status == OK
+	ChOwnRestricted bool             // only used/valid if Status == OK
+	CaseInsensitive bool             // only used/valid if Status == OK
+	CasePreserving  bool             // only used/valid if Status == OK
+}
+
+type NFSProc3CommitArgsStruct struct {
+	File   []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
+	Offset uint64 `XDR_Name:"Unsigned Hyper Integer"`
+	Count  uint32 `XDR_Name:"Unsigned Integer"`
+}
+
+type NFSProc3CommitResultsStruct struct {
+	Status  uint32                  // OK or enum nfsstat3
+	FileWCC WCCDataStruct           //
+	Verf    [NFS3WriteVersSize]byte // only used/valid if Status == OK
+}

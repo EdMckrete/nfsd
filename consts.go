@@ -134,3 +134,10 @@ const ( // enum createmode3
 	Guarded   = uint32(1)
 	Exclusive = uint32(2)
 )
+
+const (
+	FSF3Link        = uint32(0x0001)
+	FSF3SymLink     = uint32(0x0002)
+	FSF3Homogeneous = uint32(0x0008)
+	FSF3CanSetTime  = uint32(0x0010)
+)
