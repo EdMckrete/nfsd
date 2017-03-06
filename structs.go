@@ -97,13 +97,27 @@ type WCCDataStruct struct { // struct wcc_data
 
 type DirOpArgs3Struct struct { // struct diropargs3
 	Dir  []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
-	Name []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"255"`
+	Name string `XDR_Name:"String" XDR_MaxSize:"255"`
 }
 
 type CreateHowStruct struct { // union CreateHowStruct
 	Mode          uint32                   // enum createmode3
 	ObjAttributes SAttr3Struct             // only used/valid if Mode == Unchecked || Mode == Guarded
 	Verf          [NFS3CreateVerfSize]byte // only used/valid if Mode == Exclusive
+}
+
+type DirListEntryStruct struct { // struct entry3
+	FileID uint64 `XDR_Name:"Unsigned Hyper Integer"`
+	Name   string `XDR_Name:"String" XDR_MaxSize:"255"`
+	Cookie uint64 `XDR_Name:"Unsigned Hyper Integer"`
+}
+
+type DirListEntryPlusStruct struct { // struct entryplus3
+	FileID         uint64 `XDR_Name:"Unsigned Hyper Integer"`
+	Name           string `XDR_Name:"String" XDR_MaxSize:"255"`
+	Cookie         uint64 `XDR_Name:"Unsigned Hyper Integer"`
+	NameAttributes PostOpAttrStruct
+	NameHandle     PostOpFh3Struct
 }
 
 // Mount V3 API call/reply structs
@@ -290,8 +304,11 @@ type NFSProc3ReadDirArgsStruct struct {
 }
 
 type NFSProc3ReadDirResultsStruct struct {
-	Status uint32 // OK or enum nfsstat3
-	// TODO
+	Status        uint32                   // OK or enum nfsstat3
+	DirAttributes PostOpAttrStruct         //
+	CookieVerf    [NFS3CookieVerfSize]byte // only used/valid if Status == OK
+	Entries       []DirListEntryStruct     // only used/valid if Status == OK
+	EOF           bool                     // only used/valid if Status == OK
 }
 
 type NFSProc3ReadDirPlusArgsStruct struct {
@@ -303,8 +320,11 @@ type NFSProc3ReadDirPlusArgsStruct struct {
 }
 
 type NFSProc3ReadDirPlusResultsStruct struct {
-	Status uint32 // OK or enum nfsstat3
-	// TODO
+	Status        uint32                   // OK or enum nfsstat3
+	DirAttributes PostOpAttrStruct         //
+	CookieVerf    [NFS3CookieVerfSize]byte // only used/valid if Status == OK
+	Entries       []DirListEntryPlusStruct // only used/valid if Status == OK
+	EOF           bool                     // only used/valid if Status == OK
 }
 
 type NFSProc3FSStatArgsStruct struct {
