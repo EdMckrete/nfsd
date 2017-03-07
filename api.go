@@ -8,7 +8,45 @@ type MountV3Interface interface {
 	MountProc3Umnt(mountProc3UmntArgs *MountProc3UmntArgsStruct)
 }
 
-type NFSV3Interface interface {
+// StartIPv4TCPMountV3Server launches a Mount V3 server on the specified IPv4 TCP Port
+//
+// port      specifies the TCP port # upon which to serve Mount V3 via IPv4
+// publish   indicates whether or not to publish the Mount V3 server via portmapper/rpcbind
+// callbacks specifies the receiver of the API "up calls" as listed in MountV3Interface
+func StartIPv4TCPMountV3Server(port uint16, publish bool, callbacks MountV3Interface) (err error) {
+	err = startIPv4TCPMountV3Server(port, publish, callbacks)
+	return
+}
+
+// StartIPv4UDPMountV3Server launches a Mount V3 server on the specified IPv4 UDP Port
+//
+// port      specifies the UDP port # upon which to serve Mount V3 via IPv4
+// publish   indicates whether or not to publish the Mount V3 server via portmapper/rpcbind
+// callbacks specifies the receiver of the API "up calls" as listed in MountV3Interface
+func StartIPv4UDPMountV3Server(port uint16, publish bool, callbacks MountV3Interface) (err error) {
+	err = startIPv4UDPMountV3Server(port, publish, callbacks)
+	return
+}
+
+// StopIPv4TCPMountV3Server stops an Mount V3 server
+//
+// port      specifies the TCP port # upon which Mount V3 servicing via IPv4 should be halted
+// unpublish indicates whether or not to remove a previously published Mount V3 server via portmapper/rpcbind
+func StopIPv4TCPMountV3Server(port uint16, unpublish bool) (err error) {
+	err = stopIPv4TCPMountV3Server(port, unpublish)
+	return
+}
+
+// StopIPv4UDPMountV3Server stops an Mount V3 server
+//
+// port      specifies the UDP port # upon which Mount V3 servicing via IPv4 should be halted
+// unpublish indicates whether or not to remove a previously published Mount V3 server via portmapper/rpcbind
+func StopIPv4UDPMountV3Server(port uint16, unpublish bool) (err error) {
+	err = stopIPv4UDPMountV3Server(port, unpublish)
+	return
+}
+
+type NFSv3Interface interface {
 	NFSProc3Null()
 	NFSProc3GetAttr(nfsProc3GetAttrArgs *NFSProc3GetAttrArgsStruct) (nfsProc3GetAttrResults *NFSProc3GetAttrResultsStruct)
 	NFSProc3SetAttr(nfsProc3SetAttrArgs *NFSProc3SetAttrArgsStruct) (nfsProc3SetAttrResults *NFSProc3SetAttrResultsStruct)
@@ -30,4 +68,42 @@ type NFSV3Interface interface {
 	NFSProc3FSInfo(nfsProc3FSInfoArgs *NFSProc3FSInfoArgsStruct) (nfsProc3FSInfoResults *NFSProc3FSInfoResultsStruct)
 	NFSProc3PathConf(nfsProc3PathConfArgs *NFSProc3PathConfArgsStruct) (nfsProc3PathConfResults *NFSProc3PathConfResultsStruct)
 	NFSProc3Commit(nfsProc3CommitArgs *NFSProc3CommitArgsStruct) (nfsProc3CommitResults *NFSProc3CommitResultsStruct)
+}
+
+// StartIPv4TCPNFSv3Server launches an NFSv3 server on the specified IPv4 TCP Port
+//
+// port      specifies the TCP port # upon which to serve NFSv3 via IPv4
+// publish   indicates whether or not to publish the NFSv3 server via portmapper/rpcbind
+// callbacks specifies the receiver of the API "up calls" as listed in NFSv3Interface
+func StartIPv4TCPNFSv3Server(port uint16, publish bool, callbacks NFSv3Interface) (err error) {
+	err = startIPv4TCPNFSv3Server(port, publish, callbacks)
+	return
+}
+
+// StartIPv4UDPNFSv3Server launches an NFSv3 server on the specified IPv4 TCP Port
+//
+// port      specifies the UDP port # upon which to serve NFSv3 via IPv4
+// publish   indicates whether or not to publish the NFSv3 server via portmapper/rpcbind
+// callbacks specifies the receiver of the API "up calls" as listed in NFSv3Interface
+func StartIPv4UDPNFSv3Server(port uint16, publish bool, callbacks NFSv3Interface) (err error) {
+	err = startIPv4UDPNFSv3Server(port, publish, callbacks)
+	return
+}
+
+// StopIPv4TCPNFSv3Server stops an NFSv3 server
+//
+// port      specifies the TCP port # upon which NFSv3 servicing via IPv4 should be halted
+// unpublish indicates whether or not to remove a previously published NFSv3 server via portmapper/rpcbind
+func StopIPv4TCPNFSv3Server(port uint16, unpublish bool) (err error) {
+	err = stopIPv4TCPNFSv3Server(port, unpublish)
+	return
+}
+
+// StopIPv4UDPNFSv3Server stops an NFSv3 server
+//
+// port      specifies the UDP port # upon which NFSv3 servicing via IPv4 should be halted
+// unpublish indicates whether or not to remove a previously published NFSv3 server via portmapper/rpcbind
+func StopIPv4UDPNFSv3Server(port uint16, unpublish bool) (err error) {
+	err = stopIPv4UDPNFSv3Server(port, unpublish)
+	return
 }
