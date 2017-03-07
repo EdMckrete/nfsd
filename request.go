@@ -5,18 +5,19 @@ import (
 
 	"github.com/swiftstack/onc"
 	"github.com/swiftstack/onc/oncserver"
+	"github.com/swiftstack/xdr"
 )
 
 type mountRequestHandlerStruct struct {
-	oncserver.RequestCallbacks
-	prot uint32 // either onc.IPProtoTCP or onc.IPProtoUDP
-	port uint16
+	callbacks MountV3Interface
+	prot      uint32 // either onc.IPProtoTCP or onc.IPProtoUDP
+	port      uint16
 }
 
 type nfsRequestHandlerStruct struct {
-	oncserver.RequestCallbacks
-	prot uint32 // either onc.IPProtoTCP or onc.IPProtoUDP
-	port uint16
+	callbacks NFSv3Interface
+	prot      uint32 // either onc.IPProtoTCP or onc.IPProtoUDP
+	port      uint16
 }
 
 func (mountRequestHandler *mountRequestHandlerStruct) ONCRequest(connHandle oncserver.ConnHandle, xid uint32, prog uint32, vers uint32, proc uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -32,7 +33,7 @@ func (mountRequestHandler *mountRequestHandlerStruct) ONCRequest(connHandle oncs
 
 	switch proc {
 	case ProcNULL:
-		_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+		mountRequestHandler.null(connHandle, xid, authSysBody, parms)
 	case MOUNTPROC3MNT:
 		mountRequestHandler.mnt(connHandle, xid, authSysBody, parms)
 	case MOUNTPROC3UMNT:
@@ -42,12 +43,67 @@ func (mountRequestHandler *mountRequestHandlerStruct) ONCRequest(connHandle oncs
 	}
 }
 
+func (mountRequestHandler *mountRequestHandlerStruct) null(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
+	if 0 != len(parms) {
+		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		return
+	}
+
+	mountRequestHandler.callbacks.MountProc3Null(authSysBody)
+
+	_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+}
+
 func (mountRequestHandler *mountRequestHandlerStruct) mnt(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
-	// TODO
+	var (
+		bytesConsumed        uint64
+		err                  error
+		mountProc3MntArgs    MountProc3MntArgsStruct
+		mountProc3MntResults *MountProc3MntResultsStruct
+		results              []byte
+	)
+
+	bytesConsumed, err = xdr.Unpack(parms, &mountProc3MntArgs)
+	if nil != err {
+		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		return
+	}
+	if uint64(len(parms)) != bytesConsumed {
+		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		return
+	}
+
+	mountProc3MntResults = mountRequestHandler.callbacks.MountProc3Mnt(authSysBody, &mountProc3MntArgs)
+
+	results, err = xdr.Pack(mountProc3MntResults)
+	if nil != err {
+		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+		return
+	}
+
+	_ = oncserver.SendAcceptedSuccess(connHandle, xid, results)
 }
 
 func (mountRequestHandler *mountRequestHandlerStruct) umnt(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
-	// TODO
+	var (
+		bytesConsumed      uint64
+		err                error
+		mountProc3UmntArgs MountProc3UmntArgsStruct
+	)
+
+	bytesConsumed, err = xdr.Unpack(parms, &mountProc3UmntArgs)
+	if nil != err {
+		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		return
+	}
+	if uint64(len(parms)) != bytesConsumed {
+		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		return
+	}
+
+	mountRequestHandler.callbacks.MountProc3Umnt(authSysBody, &mountProc3UmntArgs)
+
+	_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) ONCRequest(connHandle oncserver.ConnHandle, xid uint32, prog uint32, vers uint32, proc uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -63,7 +119,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) ONCRequest(connHandle oncserve
 
 	switch proc {
 	case ProcNULL:
-		_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+		nfsRequestHandler.null(connHandle, xid, authSysBody, parms)
 	case NFSPROC3GETATTR:
 		nfsRequestHandler.getattr(connHandle, xid, authSysBody, parms)
 	case NFSPROC3SETATTR:
@@ -107,6 +163,17 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) ONCRequest(connHandle oncserve
 	default:
 		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.ProcUnavail)
 	}
+}
+
+func (nfsRequestHandler *nfsRequestHandlerStruct) null(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
+	if 0 != len(parms) {
+		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		return
+	}
+
+	nfsRequestHandler.callbacks.NFSProc3Null(authSysBody)
+
+	_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) getattr(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {

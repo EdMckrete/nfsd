@@ -9,7 +9,7 @@ import (
 func startIPv4TCPMountV3Server(port uint16, publish bool, callbacks MountV3Interface) (published bool, err error) {
 	published = false
 
-	err = oncserver.StartServer(onc.IPProtoTCP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumMount, VersList: []uint32{3}}}, &mountRequestHandlerStruct{prot: onc.IPProtoTCP, port: port})
+	err = oncserver.StartServer(onc.IPProtoTCP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumMount, VersList: []uint32{3}}}, &mountRequestHandlerStruct{callbacks: callbacks, prot: onc.IPProtoTCP, port: port})
 	if nil != err {
 		return
 	}
@@ -25,7 +25,7 @@ func startIPv4TCPMountV3Server(port uint16, publish bool, callbacks MountV3Inter
 func startIPv4UDPMountV3Server(port uint16, publish bool, callbacks MountV3Interface) (published bool, err error) {
 	published = false
 
-	err = oncserver.StartServer(onc.IPProtoUDP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumMount, VersList: []uint32{3}}}, &mountRequestHandlerStruct{prot: onc.IPProtoUDP, port: port})
+	err = oncserver.StartServer(onc.IPProtoUDP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumMount, VersList: []uint32{3}}}, &mountRequestHandlerStruct{callbacks: callbacks, prot: onc.IPProtoUDP, port: port})
 	if nil != err {
 		return
 	}
@@ -67,7 +67,7 @@ func stopIPv4UDPMountV3Server(port uint16, unpublish bool) (unpublished bool, er
 func startIPv4TCPNFSv3Server(port uint16, publish bool, callbacks NFSv3Interface) (published bool, err error) {
 	published = false
 
-	err = oncserver.StartServer(onc.IPProtoTCP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumNFS, VersList: []uint32{3}}}, &nfsRequestHandlerStruct{prot: onc.IPProtoTCP, port: port})
+	err = oncserver.StartServer(onc.IPProtoTCP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumNFS, VersList: []uint32{3}}}, &nfsRequestHandlerStruct{callbacks: callbacks, prot: onc.IPProtoTCP, port: port})
 	if nil != err {
 		return
 	}
@@ -83,7 +83,7 @@ func startIPv4TCPNFSv3Server(port uint16, publish bool, callbacks NFSv3Interface
 func startIPv4UDPNFSv3Server(port uint16, publish bool, callbacks NFSv3Interface) (published bool, err error) {
 	published = false
 
-	err = oncserver.StartServer(onc.IPProtoUDP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumNFS, VersList: []uint32{3}}}, &nfsRequestHandlerStruct{prot: onc.IPProtoUDP, port: port})
+	err = oncserver.StartServer(onc.IPProtoUDP, port, []oncserver.ProgVersStruct{{Prog: onc.ProgNumNFS, VersList: []uint32{3}}}, &nfsRequestHandlerStruct{callbacks: callbacks, prot: onc.IPProtoUDP, port: port})
 	if nil != err {
 		return
 	}
