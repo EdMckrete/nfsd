@@ -5,6 +5,7 @@ import "github.com/swiftstack/onc"
 // See also consts.go and structs.go for exported constants and structures referenced by this API
 
 type MountV3Interface interface {
+	ErrorLog(err error)
 	MountProc3Null(authSysBody *onc.AuthSysBodyStruct)
 	MountProc3Mnt(authSysBody *onc.AuthSysBodyStruct, mountProc3MntArgs *MountProc3MntArgsStruct) (mountProc3MntResults *MountProc3MntResultsStruct)
 	MountProc3Umnt(authSysBody *onc.AuthSysBodyStruct, mountProc3UmntArgs *MountProc3UmntArgsStruct)
@@ -69,6 +70,7 @@ func StopIPv4UDPMountV3Server(port uint16, unpublish bool) (unpublished bool, er
 }
 
 type NFSv3Interface interface {
+	ErrorLog(err error)
 	NFSProc3Null(authSysBody *onc.AuthSysBodyStruct)
 	NFSProc3GetAttr(authSysBody *onc.AuthSysBodyStruct, nfsProc3GetAttrArgs *NFSProc3GetAttrArgsStruct) (nfsProc3GetAttrResults *NFSProc3GetAttrResultsStruct)
 	NFSProc3SetAttr(authSysBody *onc.AuthSysBodyStruct, nfsProc3SetAttrArgs *NFSProc3SetAttrArgsStruct) (nfsProc3SetAttrResults *NFSProc3SetAttrResultsStruct)

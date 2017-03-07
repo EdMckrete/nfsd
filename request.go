@@ -21,14 +21,20 @@ type nfsRequestHandlerStruct struct {
 }
 
 func (mountRequestHandler *mountRequestHandlerStruct) ONCRequest(connHandle oncserver.ConnHandle, xid uint32, prog uint32, vers uint32, proc uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
+	var (
+		err error
+	)
+
 	if onc.ProgNumMount != prog {
-		err := fmt.Errorf("prog was %v... expected it to be onc.ProgNumMount (%v)", prog, onc.ProgNumMount)
-		panic(err)
+		err = fmt.Errorf("prog was %v... expected it to be onc.ProgNumMount (%v)", prog, onc.ProgNumMount)
+		mountRequestHandler.callbacks.ErrorLog(err)
+		panic(err) // i.e. this shouldn't have happened if oncserver "dispatcher" is functioning correctly
 	}
 
 	if 3 != vers {
-		err := fmt.Errorf("vers was %v... expected it to be 3", vers)
-		panic(err)
+		err = fmt.Errorf("vers was %v... expected it to be 3", vers)
+		mountRequestHandler.callbacks.ErrorLog(err)
+		panic(err) // i.e. this shouldn't have happened if oncserver "dispatcher" is functioning correctly
 	}
 
 	switch proc {
@@ -39,19 +45,36 @@ func (mountRequestHandler *mountRequestHandlerStruct) ONCRequest(connHandle oncs
 	case MOUNTPROC3UMNT:
 		mountRequestHandler.umnt(connHandle, xid, authSysBody, parms)
 	default:
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.ProcUnavail)
+		err = fmt.Errorf("proc %v not available", proc)
+		mountRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.ProcUnavail)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+		}
 	}
 }
 
 func (mountRequestHandler *mountRequestHandlerStruct) null(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
+	var (
+		err error
+	)
+
 	if 0 != len(parms) {
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		err = fmt.Errorf("ProcNULL(...parms) should have been void")
+		mountRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+		}
 		return
 	}
 
 	mountRequestHandler.callbacks.MountProc3Null(authSysBody)
 
-	_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+	if nil != err {
+		mountRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (mountRequestHandler *mountRequestHandlerStruct) mnt(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -61,27 +84,66 @@ func (mountRequestHandler *mountRequestHandlerStruct) mnt(connHandle oncserver.C
 		mountProc3MntArgs    MountProc3MntArgsStruct
 		mountProc3MntResults *MountProc3MntResultsStruct
 		results              []byte
+		statusOnlyResults    StatusOnlyResultsStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &mountProc3MntArgs)
 	if nil != err {
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		mountRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+		}
 		return
 	}
 	if uint64(len(parms)) != bytesConsumed {
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		err = fmt.Errorf("xdr.Unpack() failed to consume all of parms")
+		mountRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+		}
 		return
 	}
 
 	mountProc3MntResults = mountRequestHandler.callbacks.MountProc3Mnt(authSysBody, &mountProc3MntArgs)
 
-	results, err = xdr.Pack(mountProc3MntResults)
-	if nil != err {
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
-		return
+	if OK == mountProc3MntResults.Status {
+		if (1 != len(mountProc3MntResults.AuthFlavors)) || (onc.AuthSys != mountProc3MntResults.AuthFlavors[0]) {
+			err = fmt.Errorf("mountProc3MntResults.AuthFlavors must == []{onc.AuthSys}")
+			mountRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				mountRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+		results, err = xdr.Pack(mountProc3MntResults)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				mountRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	} else {
+		statusOnlyResults.Status = mountProc3MntResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				mountRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
 	}
 
-	_ = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		mountRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (mountRequestHandler *mountRequestHandlerStruct) umnt(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -93,28 +155,46 @@ func (mountRequestHandler *mountRequestHandlerStruct) umnt(connHandle oncserver.
 
 	bytesConsumed, err = xdr.Unpack(parms, &mountProc3UmntArgs)
 	if nil != err {
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		mountRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+		}
 		return
 	}
 	if uint64(len(parms)) != bytesConsumed {
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		err = fmt.Errorf("xdr.Unpack() failed to consume all of parms")
+		mountRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		if nil != err {
+			mountRequestHandler.callbacks.ErrorLog(err)
+		}
 		return
 	}
 
 	mountRequestHandler.callbacks.MountProc3Umnt(authSysBody, &mountProc3UmntArgs)
 
-	_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+	if nil != err {
+		mountRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) ONCRequest(connHandle oncserver.ConnHandle, xid uint32, prog uint32, vers uint32, proc uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
+	var (
+		err error
+	)
+
 	if onc.ProgNumNFS != prog {
-		err := fmt.Errorf("prog was %v... expected it to be onc.ProgNumNFS (%v)", prog, onc.ProgNumNFS)
-		panic(err)
+		err = fmt.Errorf("prog was %v... expected it to be onc.ProgNumNFS (%v)", prog, onc.ProgNumNFS)
+		nfsRequestHandler.callbacks.ErrorLog(err)
+		panic(err) // i.e. this shouldn't have happened if oncserver "dispatcher" is functioning correctly
 	}
 
 	if 3 != vers {
-		err := fmt.Errorf("vers was %v... expected it to be 3", vers)
-		panic(err)
+		err = fmt.Errorf("vers was %v... expected it to be 3", vers)
+		nfsRequestHandler.callbacks.ErrorLog(err)
+		panic(err) // i.e. this shouldn't have happened if oncserver "dispatcher" is functioning correctly
 	}
 
 	switch proc {
@@ -161,19 +241,36 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) ONCRequest(connHandle oncserve
 	case NFSPROC3COMMIT:
 		nfsRequestHandler.commit(connHandle, xid, authSysBody, parms)
 	default:
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.ProcUnavail)
+		err = fmt.Errorf("proc %v not available", proc)
+		nfsRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.ProcUnavail)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+		}
 	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) null(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
+	var (
+		err error
+	)
+
 	if 0 != len(parms) {
-		_ = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		err = fmt.Errorf("ProcNULL(...parms) should have been void")
+		nfsRequestHandler.callbacks.ErrorLog(err)
+		err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.GarbageArgs)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+		}
 		return
 	}
 
 	nfsRequestHandler.callbacks.NFSProc3Null(authSysBody)
 
-	_ = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, nil)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) getattr(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {

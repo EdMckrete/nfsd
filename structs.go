@@ -5,6 +5,10 @@ package nfsd
 // Where possible (i.e. when the corresponding ONC RPC specification doesn't use union/switch or void),
 // these structs are tagged with the package xdr annotations enabling direct xdr.Pack()/xdr.Unpack().
 
+type StatusOnlyResultsStruct struct {
+	Status uint32 `XDR_Name:"Enumeration"` // enum nfsstat3
+}
+
 type UnsignedIntegerStruct struct {
 	UnsignedInteger uint32 `XDR_Name:"Unsigned Integer"`
 }
@@ -127,8 +131,9 @@ type MountProc3MntArgsStruct struct {
 }
 
 type MountProc3MntResultsStruct struct { // union mountres3
-	Status  uint32 `XDR_Name:"Enumeration"`                                  // OK or enum mountstat3
-	FHandle []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"` // only used/valid if Status == OK
+	Status      uint32   `XDR_Name:"Enumeration"`                                  // OK or enum mountstat3
+	FHandle     []byte   `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"` // only used/valid if Status == OK
+	AuthFlavors []uint32 `XDR_Name:"Variable-Length Array"`                        // only used/valid if Status == OK; enum auth_flavor; must == AuthSys
 }
 
 type MountProc3UmntArgsStruct struct {
