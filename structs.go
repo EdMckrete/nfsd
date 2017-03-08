@@ -1,30 +1,5 @@
 package nfsd
 
-// Basic XDR type structs to enable partial xdr.Pack()/xdr.Unpack() of ONC RPC's using "union/switch" and "void"
-//
-// Where possible (i.e. when the corresponding ONC RPC specification doesn't use union/switch or void),
-// these structs are tagged with the package xdr annotations enabling direct xdr.Pack()/xdr.Unpack().
-
-type StatusOnlyResultsStruct struct {
-	Status uint32 `XDR_Name:"Enumeration"` // enum nfsstat3
-}
-
-type UnsignedIntegerStruct struct {
-	UnsignedInteger uint32 `XDR_Name:"Unsigned Integer"`
-}
-
-type EnumerationStruct struct {
-	Enumeration uint32 `XDR_Name:"Enumeration"`
-}
-
-type BooleanStruct struct {
-	Bool bool `XDR_Name:"Boolean"`
-}
-
-type UnsignedHyperIntegerStruct struct {
-	UnsignedHyperInteger uint64 `XDR_Name:"Unsigned Hyper Integer"`
-}
-
 // Mount V3 / NFSv3 API embedded structs
 
 type SpecData3Struct struct { // struct specdata3
@@ -122,6 +97,10 @@ type DirListEntryPlusStruct struct { // struct entryplus3
 	Cookie         uint64 `XDR_Name:"Unsigned Hyper Integer"`
 	NameAttributes PostOpAttrStruct
 	NameHandle     PostOpFh3Struct
+}
+
+type StatusOnlyResultsStruct struct {
+	Status uint32 `XDR_Name:"Enumeration"` // enum mountstat3 or enum nfsstat3
 }
 
 // Mount V3 API call/reply structs
