@@ -4,6 +4,7 @@ import "github.com/swiftstack/onc"
 
 // See also consts.go and structs.go for exported constants and structures referenced by this API
 
+// MountV3Interface describes the interface for an object supplied to StartIPv4{TCP|UDP}MountV3Server to enable callbacks
 type MountV3Interface interface {
 	ErrorLog(err error)
 	MountProc3Null(authSysBody *onc.AuthSysBodyStruct)
@@ -69,6 +70,7 @@ func StopIPv4UDPMountV3Server(port uint16, unpublish bool) (unpublished bool, er
 	return
 }
 
+// NFSv3Interface describes the interface for an object supplied to StartIPv4{TCP|UDP}NFSv3Server to enable callbacks
 type NFSv3Interface interface {
 	ErrorLog(err error)
 	NFSProc3Null(authSysBody *onc.AuthSysBodyStruct)
