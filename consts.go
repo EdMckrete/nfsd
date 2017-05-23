@@ -24,7 +24,7 @@ const ( // Mount-specific
 const ( // NFSv3-specific
 	NFS3CookieVerfSize = uint32(8) // The size in bytes of the opaque cookie verifier passed by READDIR and READDIRPLUS
 	NFS3CreateVerfSize = uint32(8) // The size in bytes of the opaque verifier used for exclusive CREATE
-	NFS3WriteVersSize  = uint32(8) // The size in butes of the opaque verifier used for asynchronous WRITE
+	NFS3WriteVerfSize  = uint32(8) // The size in butes of the opaque verifier used for asynchronous WRITE
 )
 
 const ( // enum mountstat3

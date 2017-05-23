@@ -18,11 +18,11 @@ type FAttr3Struct struct { // struct fattr3
 	NLink  uint32          `XDR_Name:"Unsigned Integer"`
 	UID    uint32          `XDR_Name:"Unsigned Integer"`
 	GID    uint32          `XDR_Name:"Unsigned Integer"`
-	Size   uint64          `XDR_Name:"Hyper Integer"`
-	Used   uint64          `XDR_Name:"Hyper Integer"`
+	Size   uint64          `XDR_Name:"Unsigned Hyper Integer"`
+	Used   uint64          `XDR_Name:"Unsigned Hyper Integer"`
 	RDev   SpecData3Struct `XDR_Name:"Structure"`
-	FSID   uint64          `XDR_Name:"Hyper Integer"`
-	FileID uint64          `XDR_Name:"Hyper Integer"`
+	FSID   uint64          `XDR_Name:"Unsigned Hyper Integer"`
+	FileID uint64          `XDR_Name:"Unsigned Hyper Integer"`
 	ATime  NFSTime3Struct  `XDR_Name:"Structure"`
 	MTime  NFSTime3Struct  `XDR_Name:"Structure"`
 	CTime  NFSTime3Struct  `XDR_Name:"Structure"`
@@ -49,7 +49,7 @@ type SAttrGuard3Struct struct { // union sattrguard3
 }
 
 type WCCAttrStruct struct { // struct wcc_attr
-	Size  uint64         `XDR_Name:"Hyper Integer"`
+	Size  uint64         `XDR_Name:"Unsigned Hyper Integer"`
 	MTime NFSTime3Struct `XDR_Name:"Structure"`
 	CTime NFSTime3Struct `XDR_Name:"Structure"`
 }
@@ -99,8 +99,40 @@ type DirListEntryPlusStruct struct { // struct entryplus3
 	NameHandle     PostOpFh3Struct
 }
 
-type StatusOnlyResultsStruct struct {
+type StatusOnlyStruct struct {
 	Status uint32 `XDR_Name:"Enumeration"` // enum mountstat3 or enum nfsstat3
+}
+
+type BooleanOnlyStruct struct {
+	Bool bool `XDR_Name:"Boolean"`
+}
+
+type UnsignedIntegerOnlyStruct struct {
+	UnsignedInteger uint32 `XDR_Name:"Unsigned Integer"`
+}
+
+type UnsignedHyperIntegerOnlyStruct struct {
+	UnsignedHyperInteger uint64 `XDR_Name:"Unsigned Hyper Integer"`
+}
+
+type VariableLengthOpaqueDataOnlyStruct struct {
+	VariableLengthOpaqueData []byte `XDR_Name:"Variable-Length Opaque Data"`
+}
+
+type CreateVerfOnlyStruct struct {
+	Verf [NFS3CreateVerfSize]byte `XDR_Name:"Fixed-Length Opaque Data"`
+}
+
+type WriteVerfOnlyStruct struct {
+	Verf [NFS3WriteVerfSize]byte `XDR_Name:"Fixed-Length Opaque Data"`
+}
+
+type CookieVerfOnlyStruct struct {
+	Verf [NFS3CookieVerfSize]byte `XDR_Name:"Fixed-Length Opaque Data"`
+}
+
+type VariableLengthArrayLengthStruct struct {
+	Length int32 `XDR_Name:"Integer"`
 }
 
 // Mount V3 API call/reply structs
@@ -175,7 +207,7 @@ type NFSProc3ReadLinkResultsStruct struct {
 
 type NFSProc3ReadArgsStruct struct {
 	File   []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"`
-	Offset uint64 `XDR_Name:"Hyper Integer"`
+	Offset uint64 `XDR_Name:"Unsigned Hyper Integer"`
 	Count  uint32 `XDR_Name:"Unsigned Integer"`
 }
 
@@ -189,7 +221,7 @@ type NFSProc3ReadResultsStruct struct {
 
 type NFSProc3WriteArgsStruct struct {
 	File   []byte `XDR_Name:"Variable-Length Opaque Data" XDR_MaxSize:"64"` //
-	Offset uint64 `XDR_Name:"Hyper Integer"`                                //
+	Offset uint64 `XDR_Name:"Unsigned Hyper Integer"`                       //
 	Count  uint32 `XDR_Name:"Unsigned Integer"`                             //
 	Stable uint32 `XDR_Name:"Enumeration"`                                  // enum stable_how
 	Data   []byte `XDR_Name:"Variable-Length Opaque Data"`                  //
@@ -200,7 +232,7 @@ type NFSProc3WriteResultsStruct struct {
 	FileWCC   WCCDataStruct           //
 	Count     uint32                  // only used/valid if Status == OK
 	Committed uint32                  // only used/valid if Status == OK; enum stable_how
-	Verf      [NFS3WriteVersSize]byte // only used/valid if Status == OK
+	Verf      [NFS3WriteVerfSize]byte // only used/valid if Status == OK
 }
 
 type NFSProc3CreateArgsStruct struct {
@@ -369,5 +401,5 @@ type NFSProc3CommitArgsStruct struct {
 type NFSProc3CommitResultsStruct struct {
 	Status  uint32                  // OK or enum nfsstat3
 	FileWCC WCCDataStruct           //
-	Verf    [NFS3WriteVersSize]byte // only used/valid if Status == OK
+	Verf    [NFS3WriteVerfSize]byte // only used/valid if Status == OK
 }

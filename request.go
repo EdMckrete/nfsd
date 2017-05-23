@@ -84,7 +84,7 @@ func (mountRequestHandler *mountRequestHandlerStruct) mnt(connHandle oncserver.C
 		mountProc3MntArgs    MountProc3MntArgsStruct
 		mountProc3MntResults *MountProc3MntResultsStruct
 		results              []byte
-		statusOnlyResults    StatusOnlyResultsStruct
+		statusOnlyResults    StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &mountProc3MntArgs)
@@ -280,7 +280,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) getattr(connHandle oncserver.C
 		nfsProc3GetAttrArgs    NFSProc3GetAttrArgsStruct
 		nfsProc3GetAttrResults *NFSProc3GetAttrResultsStruct
 		results                []byte
-		statusOnlyResults      StatusOnlyResultsStruct
+		statusOnlyResults      StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3GetAttrArgs)
@@ -304,6 +304,11 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) getattr(connHandle oncserver.C
 
 	nfsProc3GetAttrResults = nfsRequestHandler.callbacks.NFSProc3GetAttr(authSysBody, &nfsProc3GetAttrArgs)
 
+	if OK == nfsProc3GetAttrResults.Status {
+		// TODO
+	} else {
+		// TODO
+	}
 	// TODO
 	/*
 		if OK == mountProc3MntResults.Status {
@@ -352,7 +357,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) setattr(connHandle oncserver.C
 		nfsProc3SetAttrArgs    NFSProc3SetAttrArgsStruct
 		nfsProc3SetAttrResults *NFSProc3SetAttrResultsStruct
 		results                []byte
-		statusOnlyResults      StatusOnlyResultsStruct
+		statusOnlyResults      StatusOnlyStruct
 	)
 
 	// TODO
@@ -365,7 +370,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) lookup(connHandle oncserver.Co
 		nfsProc3LookupArgs    NFSProc3LookupArgsStruct
 		nfsProc3LookupResults *NFSProc3LookupResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3LookupArgs)
@@ -399,7 +404,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) access(connHandle oncserver.Co
 		nfsProc3AccessArgs    NFSProc3AccessArgsStruct
 		nfsProc3AccessResults *NFSProc3AccessResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3AccessArgs)
@@ -433,7 +438,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) readlink(connHandle oncserver.
 		nfsProc3ReadLinkArgs    NFSProc3ReadLinkArgsStruct
 		nfsProc3ReadLinkResults *NFSProc3ReadLinkResultsStruct
 		results                 []byte
-		statusOnlyResults       StatusOnlyResultsStruct
+		statusOnlyResults       StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3ReadLinkArgs)
@@ -467,7 +472,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) read(connHandle oncserver.Conn
 		nfsProc3ReadArgs    NFSProc3ReadArgsStruct
 		nfsProc3ReadResults *NFSProc3ReadResultsStruct
 		results             []byte
-		statusOnlyResults   StatusOnlyResultsStruct
+		statusOnlyResults   StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3ReadArgs)
@@ -501,7 +506,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) write(connHandle oncserver.Con
 		nfsProc3WriteArgs    NFSProc3WriteArgsStruct
 		nfsProc3WriteResults *NFSProc3WriteResultsStruct
 		results              []byte
-		statusOnlyResults    StatusOnlyResultsStruct
+		statusOnlyResults    StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3WriteArgs)
@@ -535,7 +540,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) create(connHandle oncserver.Co
 		nfsProc3CreateArgs    NFSProc3CreateArgsStruct
 		nfsProc3CreateResults *NFSProc3CreateResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	// TODO
@@ -548,7 +553,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) mkdir(connHandle oncserver.Con
 		nfsProc3MKDirArgs    NFSProc3MKDirArgsStruct
 		nfsProc3MKDirResults *NFSProc3MKDirResultsStruct
 		results              []byte
-		statusOnlyResults    StatusOnlyResultsStruct
+		statusOnlyResults    StatusOnlyStruct
 	)
 
 	// TODO
@@ -561,7 +566,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) symlink(connHandle oncserver.C
 		nfsProc3SymLinkArgs    NFSProc3SymLinkArgsStruct
 		nfsProc3SymLinkResults *NFSProc3SymLinkResultsStruct
 		results                []byte
-		statusOnlyResults      StatusOnlyResultsStruct
+		statusOnlyResults      StatusOnlyStruct
 	)
 
 	// TODO
@@ -574,7 +579,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) remove(connHandle oncserver.Co
 		nfsProc3RemoveArgs    NFSProc3RemoveArgsStruct
 		nfsProc3RemoveResults *NFSProc3RemoveResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3RemoveArgs)
@@ -608,7 +613,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) rmdir(connHandle oncserver.Con
 		nfsProc3RMDirArgs    NFSProc3RMDirArgsStruct
 		nfsProc3RMDirResults *NFSProc3RMDirResultsStruct
 		results              []byte
-		statusOnlyResults    StatusOnlyResultsStruct
+		statusOnlyResults    StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3RMDirArgs)
@@ -642,7 +647,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) rename(connHandle oncserver.Co
 		nfsProc3RenameArgs    NFSProc3RenameArgsStruct
 		nfsProc3RenameResults *NFSProc3RenameResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3RenameArgs)
@@ -676,7 +681,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) link(connHandle oncserver.Conn
 		nfsProc3LinkArgs    NFSProc3LinkArgsStruct
 		nfsProc3LinkResults *NFSProc3LinkResultsStruct
 		results             []byte
-		statusOnlyResults   StatusOnlyResultsStruct
+		statusOnlyResults   StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3LinkArgs)
@@ -710,7 +715,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) readdir(connHandle oncserver.C
 		nfsProc3ReadDirArgs    NFSProc3ReadDirArgsStruct
 		nfsProc3ReadDirResults *NFSProc3ReadDirResultsStruct
 		results                []byte
-		statusOnlyResults      StatusOnlyResultsStruct
+		statusOnlyResults      StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3ReadDirArgs)
@@ -744,7 +749,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) readdirplus(connHandle oncserv
 		nfsProc3ReadDirPlusArgs    NFSProc3ReadDirPlusArgsStruct
 		nfsProc3ReadDirPlusResults *NFSProc3ReadDirPlusResultsStruct
 		results                    []byte
-		statusOnlyResults          StatusOnlyResultsStruct
+		statusOnlyResults          StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3ReadDirPlusArgs)
@@ -778,7 +783,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) fsstat(connHandle oncserver.Co
 		nfsProc3FSStatArgs    NFSProc3FSStatArgsStruct
 		nfsProc3FSStatResults *NFSProc3FSStatResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3FSStatArgs)
@@ -812,7 +817,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) fsinfo(connHandle oncserver.Co
 		nfsProc3FSInfoArgs    NFSProc3FSInfoArgsStruct
 		nfsProc3FSInfoResults *NFSProc3FSInfoResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3FSInfoArgs)
@@ -846,7 +851,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) pathconf(connHandle oncserver.
 		nfsProc3PathConfArgs    NFSProc3PathConfArgsStruct
 		nfsProc3PathConfResults *NFSProc3PathConfResultsStruct
 		results                 []byte
-		statusOnlyResults       StatusOnlyResultsStruct
+		statusOnlyResults       StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3PathConfArgs)
@@ -880,7 +885,7 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) commit(connHandle oncserver.Co
 		nfsProc3CommitArgs    NFSProc3CommitArgsStruct
 		nfsProc3CommitResults *NFSProc3CommitResultsStruct
 		results               []byte
-		statusOnlyResults     StatusOnlyResultsStruct
+		statusOnlyResults     StatusOnlyStruct
 	)
 
 	bytesConsumed, err = xdr.Unpack(parms, &nfsProc3CommitArgs)
