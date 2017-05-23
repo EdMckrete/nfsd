@@ -307,47 +307,22 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) getattr(connHandle oncserver.C
 	if OK == nfsProc3GetAttrResults.Status {
 		// TODO
 	} else {
-		// TODO
-	}
-	// TODO
-	/*
-		if OK == mountProc3MntResults.Status {
-			if (1 != len(mountProc3MntResults.AuthFlavors)) || (onc.AuthSys != mountProc3MntResults.AuthFlavors[0]) {
-				err = fmt.Errorf("mountProc3MntResults.AuthFlavors must == []{onc.AuthSys}")
-				mountRequestHandler.callbacks.ErrorLog(err)
-				err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
-				if nil != err {
-					mountRequestHandler.callbacks.ErrorLog(err)
-				}
-				return
-			}
-			results, err = xdr.Pack(mountProc3MntResults)
-			if nil != err {
-				mountRequestHandler.callbacks.ErrorLog(err)
-				err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
-				if nil != err {
-					mountRequestHandler.callbacks.ErrorLog(err)
-				}
-				return
-			}
-		} else {
-			statusOnlyResults.Status = mountProc3MntResults.Status
-			results, err = xdr.Pack(statusOnlyResults)
-			if nil != err {
-				mountRequestHandler.callbacks.ErrorLog(err)
-				err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
-				if nil != err {
-					mountRequestHandler.callbacks.ErrorLog(err)
-				}
-				return
-			}
-		}
-
-		err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+		statusOnlyResults.Status = nfsProc3GetAttrResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
 		if nil != err {
-			mountRequestHandler.callbacks.ErrorLog(err)
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
 		}
-	*/
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) setattr(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -360,7 +335,29 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) setattr(connHandle oncserver.C
 		statusOnlyResults      StatusOnlyStruct
 	)
 
-	// TODO
+	// TODO - unpack nfsProc3SetAttrArgs
+
+	nfsProc3SetAttrResults = nfsRequestHandler.callbacks.NFSProc3SetAttr(authSysBody, &nfsProc3SetAttrArgs)
+
+	if OK == nfsProc3SetAttrResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3SetAttrResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) lookup(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -394,7 +391,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) lookup(connHandle oncserver.Co
 
 	nfsProc3LookupResults = nfsRequestHandler.callbacks.NFSProc3Lookup(authSysBody, &nfsProc3LookupArgs)
 
-	// TODO
+	if OK == nfsProc3LookupResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3LookupResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) access(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -428,7 +443,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) access(connHandle oncserver.Co
 
 	nfsProc3AccessResults = nfsRequestHandler.callbacks.NFSProc3Access(authSysBody, &nfsProc3AccessArgs)
 
-	// TODO
+	if OK == nfsProc3AccessResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3AccessResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) readlink(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -462,7 +495,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) readlink(connHandle oncserver.
 
 	nfsProc3ReadLinkResults = nfsRequestHandler.callbacks.NFSProc3ReadLink(authSysBody, &nfsProc3ReadLinkArgs)
 
-	// TODO
+	if OK == nfsProc3ReadLinkResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3ReadLinkResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) read(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -496,7 +547,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) read(connHandle oncserver.Conn
 
 	nfsProc3ReadResults = nfsRequestHandler.callbacks.NFSProc3Read(authSysBody, &nfsProc3ReadArgs)
 
-	// TODO
+	if OK == nfsProc3ReadResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3ReadResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) write(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -530,7 +599,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) write(connHandle oncserver.Con
 
 	nfsProc3WriteResults = nfsRequestHandler.callbacks.NFSProc3Write(authSysBody, &nfsProc3WriteArgs)
 
-	// TODO
+	if OK == nfsProc3WriteResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3WriteResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) create(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -543,7 +630,29 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) create(connHandle oncserver.Co
 		statusOnlyResults     StatusOnlyStruct
 	)
 
-	// TODO
+	// TODO - unpack nfsProc3CreateArgs
+
+	nfsProc3CreateResults = nfsRequestHandler.callbacks.NFSProc3Create(authSysBody, &nfsProc3CreateArgs)
+
+	if OK == nfsProc3CreateResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3CreateResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) mkdir(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -556,7 +665,29 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) mkdir(connHandle oncserver.Con
 		statusOnlyResults    StatusOnlyStruct
 	)
 
-	// TODO
+	// TODO - unpack nfsProc3MKDirArgs
+
+	nfsProc3MKDirResults = nfsRequestHandler.callbacks.NFSProc3MKDir(authSysBody, &nfsProc3MKDirArgs)
+
+	if OK == nfsProc3MKDirResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3MKDirResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) symlink(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -569,7 +700,29 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) symlink(connHandle oncserver.C
 		statusOnlyResults      StatusOnlyStruct
 	)
 
-	// TODO
+	// TODO - unpack nfsProc3SymLinkArgs
+
+	nfsProc3SymLinkResults = nfsRequestHandler.callbacks.NFSProc3SymLink(authSysBody, &nfsProc3SymLinkArgs)
+
+	if OK == nfsProc3SymLinkResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3SymLinkResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) remove(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -603,7 +756,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) remove(connHandle oncserver.Co
 
 	nfsProc3RemoveResults = nfsRequestHandler.callbacks.NFSProc3Remove(authSysBody, &nfsProc3RemoveArgs)
 
-	// TODO
+	if OK == nfsProc3RemoveResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3RemoveResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) rmdir(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -637,7 +808,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) rmdir(connHandle oncserver.Con
 
 	nfsProc3RMDirResults = nfsRequestHandler.callbacks.NFSProc3RMDir(authSysBody, &nfsProc3RMDirArgs)
 
-	// TODO
+	if OK == nfsProc3RMDirResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3RMDirResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) rename(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -671,7 +860,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) rename(connHandle oncserver.Co
 
 	nfsProc3RenameResults = nfsRequestHandler.callbacks.NFSProc3Rename(authSysBody, &nfsProc3RenameArgs)
 
-	// TODO
+	if OK == nfsProc3RenameResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3RenameResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) link(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -705,7 +912,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) link(connHandle oncserver.Conn
 
 	nfsProc3LinkResults = nfsRequestHandler.callbacks.NFSProc3Link(authSysBody, &nfsProc3LinkArgs)
 
-	// TODO
+	if OK == nfsProc3LinkResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3LinkResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) readdir(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -739,7 +964,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) readdir(connHandle oncserver.C
 
 	nfsProc3ReadDirResults = nfsRequestHandler.callbacks.NFSProc3ReadDir(authSysBody, &nfsProc3ReadDirArgs)
 
-	// TODO
+	if OK == nfsProc3ReadDirResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3ReadDirResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) readdirplus(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -773,7 +1016,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) readdirplus(connHandle oncserv
 
 	nfsProc3ReadDirPlusResults = nfsRequestHandler.callbacks.NFSProc3ReadDirPlus(authSysBody, &nfsProc3ReadDirPlusArgs)
 
-	// TODO
+	if OK == nfsProc3ReadDirPlusResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3ReadDirPlusResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) fsstat(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -807,7 +1068,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) fsstat(connHandle oncserver.Co
 
 	nfsProc3FSStatResults = nfsRequestHandler.callbacks.NFSProc3FSStat(authSysBody, &nfsProc3FSStatArgs)
 
-	// TODO
+	if OK == nfsProc3FSStatResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3FSStatResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) fsinfo(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -841,7 +1120,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) fsinfo(connHandle oncserver.Co
 
 	nfsProc3FSInfoResults = nfsRequestHandler.callbacks.NFSProc3FSInfo(authSysBody, &nfsProc3FSInfoArgs)
 
-	// TODO
+	if OK == nfsProc3FSInfoResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3FSInfoResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) pathconf(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -875,7 +1172,25 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) pathconf(connHandle oncserver.
 
 	nfsProc3PathConfResults = nfsRequestHandler.callbacks.NFSProc3PathConf(authSysBody, &nfsProc3PathConfArgs)
 
-	// TODO
+	if OK == nfsProc3PathConfResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3PathConfResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
 
 func (nfsRequestHandler *nfsRequestHandlerStruct) commit(connHandle oncserver.ConnHandle, xid uint32, authSysBody *onc.AuthSysBodyStruct, parms []byte) {
@@ -909,5 +1224,23 @@ func (nfsRequestHandler *nfsRequestHandlerStruct) commit(connHandle oncserver.Co
 
 	nfsProc3CommitResults = nfsRequestHandler.callbacks.NFSProc3Commit(authSysBody, &nfsProc3CommitArgs)
 
-	// TODO
+	if OK == nfsProc3CommitResults.Status {
+		// TODO
+	} else {
+		statusOnlyResults.Status = nfsProc3CommitResults.Status
+		results, err = xdr.Pack(statusOnlyResults)
+		if nil != err {
+			nfsRequestHandler.callbacks.ErrorLog(err)
+			err = oncserver.SendAcceptedOtherErrorReply(connHandle, xid, onc.SystemErr)
+			if nil != err {
+				nfsRequestHandler.callbacks.ErrorLog(err)
+			}
+			return
+		}
+	}
+
+	err = oncserver.SendAcceptedSuccess(connHandle, xid, results)
+	if nil != err {
+		nfsRequestHandler.callbacks.ErrorLog(err)
+	}
 }
